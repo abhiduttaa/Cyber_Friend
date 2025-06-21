@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Assisted Cyber Friend</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      /* Light Mode Variables */
+      --light-bg-primary: #f8f9fa;
+      --light-bg-secondary: #e9ecef;
+      --light-text-primary: #212529;
+      --light-text-secondary: #495057;
+      --light-card-bg: #ffffff;
+      --light-navbar-bg: #87ceeb;
+      --light-footer-bg: #87ceeb;
+      --light-accent: #00c9a7;
+      --light-accent-dark: #00a78e;
+      --light-border: #dee2e6;
+      --light-chat-user: #00c9a7;
+      --light-chat-ai: #e9ecef;
+      --light-result-box: #e9f9f7;
+      --light-accordion-bg: #f8f9fa;
+      
+      /* Dark Mode Variables */
+      --dark-bg-primary: #0f2027;
+      --dark-bg-secondary: #1a2b32;
+      --dark-text-primary: #f8f9fa;
+      --dark-text-secondary: #e9ecef;
+      --dark-card-bg: #1a2b32;
+      --dark-navbar-bg: #0f4c75;
+      --dark-footer-bg: #0f4c75;
+      --dark-accent: #00c9a7;
+      --dark-accent-dark: #00a78e;
+      --dark-border: #2c3e50;
+      --dark-chat-user: #00c9a7;
+      --dark-chat-ai: #2c3e50;
+      --dark-result-box: #1c3d4a;
+      --dark-accordion-bg: #152a35;
+    }
+
+    /* Base styles */
+    body {
+      min-height: 100vh;
+      padding-top: 80px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    body.light-mode {
+      background: var(--light-bg-primary);
+      color: var(--light-text-primary);
+      --bg-primary: var(--light-bg-primary);
+      --bg-secondary: var(--light-bg-secondary);
+      --text-primary: var(--light-text-primary);
+      --text-secondary: var(--light-text-secondary);
+      --card-bg: var(--light-card-bg);
+      --navbar-bg: var(--light-navbar-bg);
+      --footer-bg: var(--light-footer-bg);
+      --accent: var(--light-accent);
+      --accent-dark: var(--light-accent-dark);
+      --border: var(--light-border);
+      --chat-user: var(--light-chat-user);
+      --chat-ai: var(--light-chat-ai);
+      --result-box: var(--light-result-box);
+      --accordion-bg: var(--light-accordion-bg);
+    }
+
+    body.dark-mode {
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: var(--dark-text-primary);
+      --bg-primary: var(--dark-bg-primary);
+      --bg-secondary: var(--dark-bg-secondary);
+      --text-primary: var(--dark-text-primary);
+      --text-secondary: var(--dark-text-secondary);
+      --card-bg: var(--dark-card-bg);
+      --navbar-bg: var(--dark-navbar-bg);
+      --footer-bg: var(--dark-footer-bg);
+      --accent: var(--dark-accent);
+      --accent-dark: var(--dark-accent-dark);
+      --border: var(--dark-border);
+      --chat-user: var(--dark-chat-user);
+      --chat-ai: var(--dark-chat-ai);
+      --result-box: var(--dark-result-box);
+      --accordion-bg: var(--dark-accordion-bg);
+    }
+
+    /* Component styles using CSS variables */
+    .navbar {
+      background: var(--navbar-bg) !important;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-logo {
+      font-size: 1.25rem;
+      font-weight: bold;
+    }
+
+    .nav-link {
+      color: var(--text-primary) !important;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--accent) !important;
+      transform: translateY(-2px);
+    }
+
+    .section-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+      margin-bottom: 30px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      border: none;
+    }
+
+    .card-header {
+      background: rgba(0, 201, 167, 0.15);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 25px;
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: var(--text-primary);
+    }
+
+    .chat-messages {
+      height: 300px;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      background: var(--bg-secondary);
+    }
+
+    .message {
+      padding: 12px 18px;
+      border-radius: 18px;
+      max-width: 80%;
+      position: relative;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .message.user {
+      align-self: flex-end;
+      background: var(--chat-user);
+      color: white;
+      border-bottom-right-radius: 5px;
+    }
+
+    .message.gemini {
+      align-self: flex-start;
+      background: var(--chat-ai);
+      color: var(--text-primary);
+      border-bottom-left-radius: 5px;
+    }
+
+    .chat-input-container {
+      padding: 15px;
+      background: var(--bg-secondary);
+    }
+
+    .form-control, .form-control:focus {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      border-radius: 12px;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      border: none;
+      font-weight: 600;
+      border-radius: 12px;
+      padding: 10px 20px;
+      transition: all 0.3s ease;
+      color: #333;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 201, 167, 0.3);
+      color: #333;
+    }
+
+    .accordion-button {
+      background: var(--accordion-bg);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      border-radius: 10px !important;
+      margin-bottom: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .accordion-button:hover {
+      background: var(--bg-secondary);
+    }
+
+    .accordion-button:not(.collapsed) {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      box-shadow: none;
+    }
+
+    .accordion-body {
+      background: var(--card-bg);
+      color: var(--text-primary);
+      border-radius: 0 0 10px 10px;
+    }
+
+    .theme-toggle {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      border-radius: 20px;
+      padding: 8px 15px;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      background: var(--bg-secondary);
+      transform: translateY(-2px);
+    }
+
+    .footer {
+      background: var(--footer-bg);
+      color: var(--text-primary);
+      padding: 20px 0;
+      margin-top: auto;
+    }
+
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+      color: var(--accent);
+    }
+
+    .hero-section {
+      text-align: center;
+      padding: 60px 0 40px;
+      background: var(--card-bg);
+      border-radius: 16px;
+      margin-bottom: 40px;
+    }
+
+    .hero-title {
+      font-size: 2.8rem;
+      font-weight: 800;
+      margin-bottom: 20px;
+      background: linear-gradient(to right, var(--accent), #1a73e8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 1.2rem;
+      max-width: 700px;
+      margin: 0 auto 30px;
+      color: var(--text-secondary);
+    }
+
+    .analyzer-icon {
+      font-size: 2rem;
+      margin-right: 15px;
+      color: var(--accent);
+    }
+    
+    .result-box {
+      background: var(--result-box);
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 20px;
+      color: var(--text-primary);
+    }
+    
+    .btn-outline-light {
+      border-color: var(--border);
+      color: var(--text-primary);
+    }
+    
+    .btn-outline-light:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #333;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .pre-wrap {
+  white-space: pre-wrap;       /* CSS3 */
+  white-space: -moz-pre-wrap;  /* Mozilla */
+  white-space: -pre-wrap;      /* Opera 4-6 */
+  white-space: -o-pre-wrap;    /* Opera 7 */
+  word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+  </style>
+</head>
+<body class="dark-mode">
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand nav-logo" href="#">
+        <i class="fas fa-shield-alt me-2"></i>AI ASSISTED CYBER FRIEND
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="#chat"><i class="fas fa-home me-1"></i> Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#analyzer"><i class="fas fa-search me-1"></i> Analyzer</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#net-page"><i class="fa-solid fa-earth-americas"></i> NetAnalysis</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#faq"><i class="fas fa-question-circle me-1"></i> FAQ</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#contact"><i class="fas fa-envelope me-1"></i> Contact</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/news-page"><i class="fas fa-newspaper me-1"></i> News</a>
+          </li>
+          <li class="nav-item ms-2">
+            <button class="btn theme-toggle" id="themeToggle">
+              <i class="fas fa-sun me-1"></i> Light Mode
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Hero Section -->
+    <div class="hero-section">
+      <div class="container">
+        <h1 class="hero-title">Your AI-Powered Cybersecurity Assistant</h1>
+        <p class="hero-subtitle">Protect your digital assets with advanced AI threat detection, real-time analysis, and proactive security solutions.</p>
+        <div class="d-flex justify-content-center gap-3">
+          <a href="#chat" class="btn btn-lg btn-primary">
+            <i class="fas fa-comments me-2"></i>Chat with AI
+          </a>
+          <a href="#analyzer" class="btn btn-lg btn-outline-light">
+            <i class="fas fa-search me-2"></i>Scan Threats
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat Section -->
+    <div class="card section-card mb-5" id="chat">
+      <div class="card-header">
+        <i class="fas fa-comments me-2"></i>AI Chat Assistant
+      </div>
+      <div class="card-body p-0">
+        <div class="chat-messages" id="chatMessages">
+          <div class="message gemini">
+            <strong>CyberGuard:</strong> Hello! I'm your AI cybersecurity assistant. How can I help you today?
+          </div>
+          <div class="message gemini">
+            <strong>CyberGuard:</strong> You can ask me about security threats, best practices, or request analysis of files or URLs.
+          </div>
+        </div>
+        <div class="chat-input-container d-flex">
+          <input type="text" class="form-control me-2" id="chatInput" placeholder="Ask about cybersecurity..." onkeypress="if(event.key === 'Enter') sendMessage()">
+          <button class="btn btn-primary" onclick="sendMessage()">
+            <i class="fas fa-paper-plane"></i> Send
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analyzer Section -->
+<div class="card section-card mb-5" id="analyzer">
+    <div class="card-header">
+      <i class="fas fa-search me-2"></i>Threat Analyzer
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <!-- File Analyzer - LEFT -->
+        <div class="col-md-6">
+          <div class="d-flex align-items-center mb-3">
+            <i class="analyzer-icon fas fa-file-upload"></i>
+            <h3>File Analyzer</h3>
+          </div>
+          <form method="POST" action="/analyze-file" enctype="multipart/form-data">
+            <div class="mb-3">
+              <label class="form-label">Upload suspicious file</label>
+              <input type="file" name="file" class="form-control" accept=".pdf,.txt,.log,.exe,.bat,.elf,.sh" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">
+              <i class="fas fa-magnifying-glass me-2"></i>Analyze File
+            </button>
+          </form>
+          {% if result %}
+            <div class="result-box mt-4">
+              <h5>Analysis Result:</h5>
+              <div class="mt-2">Status: {{ result.status }}</div>
+              <div class="mt-1">{{ result }}</div>
+            </div>
+          {% endif %}
+        </div>
+        
+        <!-- URL Analyzer - RIGHT -->
+        <div class="col-md-6">
+          <div class="d-flex align-items-center mb-3">
+            <i class="analyzer-icon fas fa-globe"></i>
+            <h3>URL Analyzer</h3>
+          </div>
+          <form method="POST" action="/analyze-url">
+            <div class="mb-3">
+              <label class="form-label">Enter URL to scan</label>
+              <input type="url" name="url" class="form-control" placeholder="https://example.com" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">
+              <i class="fas fa-magnifying-glass me-2"></i>Analyze URL
+            </button>
+          </form>
+          {% if url_result %}
+            <div class="result-box mt-4">
+              <h5>Analysis Result:</h5>
+              <div class="mt-2">{{ url_result }}</div>
+            </div>
+          {% endif %}
+          {% if url_error %}
+            <div class="result-box mt-4 bg-danger">
+              <h5>Error:</h5>
+              <div class="mt-2">{{ url_error }}</div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add this section after the Analyzer section and before the FAQ section -->
+<!-- Net Analysis Section -->
+<div class="card section-card mb-5" id="net-page">
+    <div class="card-header">
+      <i class="fa-solid fa-earth-americas me-2"></i>Network Traffic Analyzer
+    </div>
+    <div class="card-body">
+      <div class="d-flex align-items-center mb-4">
+        <i class="analyzer-icon fa-solid fa-network-wired"></i>
+        <h3>Network Traffic Analysis</h3>
+      </div>
+      <p class="mb-4">Upload network capture files (.pcap) or log files (.txt) for deep analysis of network traffic patterns and security threats.</p>
+      
+      <form method="POST" action="/analyze-net" enctype="multipart/form-data">
+        <div class="mb-4">
+          <label class="form-label">Upload Network File (.pcap or .txt)</label>
+          <input type="file" name="net_file" class="form-control" accept=".pcap,.txt" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">
+          <i class="fas fa-magnifying-glass me-2"></i>Analyze Network Traffic
+        </button>
+      </form>
+      
+      {% if net_result %}
+        <div class="result-box mt-4">
+          <h5>Network Analysis Result:</h5>
+          <div class="mt-2 pre-wrap">{{ net_result }} netend</div>
+        </div>
+      {% endif %}
+      {% if net_error %}
+        <div class="result-box mt-4 bg-danger">
+          <h5>Error:</h5>
+          <div class="mt-2">{{ net_error }}</div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+  
+  <!-- Add this to your CSS for proper formatting -->
+  <style>
+  .pre-wrap {
+    white-space: pre-wrap;       /* CSS3 */
+    white-space: -moz-pre-wrap;  /* Mozilla */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+  }
+  </style>
+
+    <!-- FAQ Section -->
+    <div class="card section-card mb-5" id="faq">
+      <div class="card-header">
+        <i class="fas fa-question-circle me-2"></i>Frequently Asked Questions
+      </div>
+      <div class="card-body">
+        <div class="accordion" id="faqAccordion">
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqOne">
+                <i class="fas fa-question-circle me-2"></i> What is AI Assisted Cyber Friend?
+              </button>
+            </h2>
+            <div id="faqOne" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                AI Assisted Cyber Friend is an intelligent tool that helps detect cybersecurity threats using Google's Gemini AI. It provides real-time analysis, threat detection, and security advice to protect your digital assets.
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqTwo">
+                <i class="fas fa-file-alt me-2"></i> What file types are supported?
+              </button>
+            </h2>
+            <div id="faqTwo" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                We currently support a wide range of file formats including TXT, PDF, LOG, EXE, BAT, ELF, and SH. We're constantly adding support for more file types to enhance your security experience.
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqThree">
+                <i class="fas fa-shield-alt me-2"></i> How accurate is the threat detection?
+              </button>
+            </h2>
+            <div id="faqThree" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Our threat detection is powered by state-of-the-art AI and provides contextual analysis with over 98% accuracy. However, for critical systems, we always recommend manual review as an additional security measure.
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqFour">
+                <i class="fas fa-lock me-2"></i> Is my data secure with your service?
+              </button>
+            </h2>
+            <div id="faqFour" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Absolutely. We prioritize your data security above all else. All files and URLs are analyzed in a secure, isolated environment. We do not store any personal data or analysis results beyond what's necessary for the immediate session.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Section -->
+    <div class="card section-card mb-5" id="contact">
+      <div class="card-header">
+        <i class="fas fa-envelope me-2"></i>Contact Us
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <h3 class="mb-4">Get in Touch</h3>
+            <p>Have questions or feedback? Our team is here to help you with all your cybersecurity needs.</p>
+            <div class="mt-4">
+              <p><i class="fas fa-map-marker-alt me-3"></i>Kalyani</p>
+              <p><i class="fas fa-phone me-3"></i> +91 9332395679</p>
+              <p><i class="fas fa-envelope me-3"></i>ad3052056@gmail.com</p>
+            </div>
+            <div class="mt-4">
+              <h5>Follow Us</h5>
+              <div class="d-flex gap-3 mt-3">
+                <a href="https://x.com/ABHIJIT_DUTTA_7" class="btn btn-outline-light btn-sm"><i class="fab fa-twitter"></i></a>
+                <a href="https://www.linkedin.com/in/abhijitdutta07" class="btn btn-outline-light btn-sm"><i class="fab fa-linkedin-in"></i></a>
+                <a href="https://github.com/abhiduttaa" class="btn btn-outline-light btn-sm"><i class="fab fa-github"></i></a>
+                <a href="abhijitdutta0653" class="btn btn-outline-light btn-sm"><i class="fab fa-discord"></i></a>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <form class="contact-form" action="https://api.web3forms.com/submit" method="POST">
+                <input type="hidden" name="access_key" value="6d89da79-b212-496f-a0e9-7200b3d3bf81">
+              <div class="mb-3">
+                <input type="text" class="form-control" placeholder="Your Name" required>
+              </div>
+              <div class="mb-3">
+                <input type="email" class="form-control" placeholder="Your Email" required>
+              </div>
+              <div class="mb-3">
+                <input type="text" class="form-control" placeholder="Subject">
+              </div>
+              <div class="mb-3">
+                <textarea class="form-control" rows="5" placeholder="Your Message" required></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">
+                <i class="fas fa-paper-plane me-2"></i>Send Message
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 mb-4 mb-md-0">
+          <h5 class="mb-3"><i class="fas fa-shield-alt me-2"></i>AI Assisted Cyber Friend</h5>
+          <p>Your trusted partner in cybersecurity. Protecting digital assets with cutting-edge AI technology.</p>
+        </div>
+        <div class="col-md-3 mb-4 mb-md-0">
+          <h5 class="mb-3">Quick Links</h5>
+          <ul class="list-unstyled">
+            <li><a href="#chat" class="text-reset">Home</a></li>
+            <li><a href="#analyzer" class="text-reset">Analyzer</a></li>
+            <li><a href="#faq" class="text-reset">FAQ</a></li>
+            <li><a href="#contact" class="text-reset">Contact</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3">
+          <h5 class="mb-3">Resources</h5>
+          <ul class="list-unstyled">
+            <li><a href="/news-page" class="text-reset">Security News</a></li>
+            <li><a href="#" class="text-reset">Threat Reports</a></li>
+            <li><a href="#" class="text-reset">Security Tips</a></li>
+            <li><a href="#" class="text-reset">Privacy Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      <hr class="my-4">
+      <div class="text-center">
+        <p class="mb-0">© 2025 AI Assisted Cyber Friend. All rights reserved.</p>
+        <p class="mt-2 mb-0">Built with ❤️ for a safer digital world</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Theme toggle functionality
+    const themeToggle = document.getElementById('themeToggle');
+    
+    // Set initial theme based on user preference
+    function setInitialTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'light') {
+        document.body.classList.remove('dark-mode');
+        document.body.classList.add('light-mode');
+        themeToggle.innerHTML = '<i class="fas fa-moon me-1"></i> Dark Mode';
+      } else {
+        document.body.classList.remove('light-mode');
+        document.body.classList.add('dark-mode');
+        themeToggle.innerHTML = '<i class="fas fa-sun me-1"></i> Light Mode';
+      }
+    }
+    
+    // Toggle between themes
+    function toggleTheme() {
+      if (document.body.classList.contains('light-mode')) {
+        document.body.classList.remove('light-mode');
+        document.body.classList.add('dark-mode');
+        localStorage.setItem('theme', 'dark');
+        themeToggle.innerHTML = '<i class="fas fa-sun me-1"></i> Light Mode';
+      } else {
+        document.body.classList.remove('dark-mode');
+        document.body.classList.add('light-mode');
+        localStorage.setItem('theme', 'light');
+        themeToggle.innerHTML = '<i class="fas fa-moon me-1"></i> Dark Mode';
+      }
+      
+      // Update social buttons
+      const socialButtons = document.querySelectorAll('.btn-outline-light');
+      socialButtons.forEach(btn => {
+        if (document.body.classList.contains('light-mode')) {
+          btn.classList.replace('btn-outline-light', 'btn-outline-dark');
+        } else {
+          btn.classList.replace('btn-outline-dark', 'btn-outline-light');
+        }
+      });
+    }
+    
+    // Initialize theme
+    setInitialTheme();
+    
+    // Add event listener to toggle button
+    themeToggle.addEventListener('click', toggleTheme);
+    
+    // Chat functionality
+    async function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text) return;
+      
+      appendMessage(text, 'user');
+      input.value = '';
+      
+      try {
+        const response = await fetch('/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ message: text })
+        });
+        
+        const data = await response.json();
+        if (data.response_text) {
+          appendMessage(data.response_text, 'gemini');
+        } else {
+          appendMessage('Error: Could not get response from AI', 'gemini');
+        }
+      } catch (err) {
+        appendMessage('Error contacting AI backend. Please try again later.', 'gemini');
+      }
+    }
+    
+    function appendMessage(text, sender) {
+      const messagesContainer = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.className = `message ${sender}`;
+      
+      if (sender === 'user') {
+        div.innerHTML = `<strong>You:</strong> ${text}`;
+      } else {
+        div.innerHTML = `<strong>CyberGuard:</strong> ${text}`;
+      }
+      
+      messagesContainer.appendChild(div);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+    
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          window.scrollTo({
+            top: target.offsetTop - 70,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
